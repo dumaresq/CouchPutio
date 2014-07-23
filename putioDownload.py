@@ -44,7 +44,7 @@ class Putiodownload(DownloaderBase):
         OAUTH_TOKEN = self.conf('oauth_token')
         client = putio.Client(OAUTH_TOKEN)
         # Need to constuct a the API url a better way.
-        callbackurl = 'http://'+self.conf('callback_host')+'/'+self.conf('url_base')+'/api/'+self.conf('api_key')+'putiodownload.getfrom/'
+        callbackurl = 'http://'+self.conf('callback_host')+'/'+self.conf('url_base', section='core')+'/api/'+self.conf('api_key', section='core')+'putiodownload.getfrom/'
         log.info ('The callback URL is %s', callbackurl)
 	client.Transfer.add_url(url,'0','False','http://sabnzbd.dumaresq.ca/couchpotato/api/<api>/putiodownload.getfrom/')
         return True
@@ -66,9 +66,9 @@ class Putiodownload(DownloaderBase):
        files = client.File.list()
        # Got to be a better way then a for loop!
        for f in files:
-           if str(f.id) == str(kwargs.get('file_id')):
+           if str(f.id) == str(kwargs('file_id')):
                # Need to read this in from somewhere
-               client.File.download(f,'/export/nas/Downloads/')
+               client.File.download(f,dest='/export/nas/Downloads/',detele_after_download=self.conf('delete_file'))
        return True 
  
 config = [{
@@ -96,6 +96,12 @@ config = [{
                 {
                     'name': 'callback_host',
                     'description': 'This is used to generate the callback url',
+                },
+                {
+                    'name': 'detele_file',
+                    'description': 'set this to remove the file from putio after sucessful download',
+                    'type': 'bool',
+                    'default': 0,
                 },
                 {
                     'name': 'manual',
