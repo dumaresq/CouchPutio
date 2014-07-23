@@ -6,8 +6,8 @@ Putio dowloader for Couch
  * v1 Only allowed you submit the file to putio
  * v1.2 Allows you to download the file from putio
 
-##Future enhansements:
+##Future future enhancements:
  * use a download manage to have multiple streams so you can download the file faster.
 
-##Posible future enchasments:
+##Posible future enhancements:
  * daemonize the process and turn this into an API for couchpotato and another for sickbeard.
