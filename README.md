@@ -1,7 +1,7 @@
 CouchPutio
 ==========
 
-Putio dowloader for Couch
+Putio dowloader for http://couchpota.to
 
  * v1 Only allowed you submit the file to putio
  * v1.2 Allows you to download the file from putio
