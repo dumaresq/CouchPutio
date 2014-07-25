@@ -22,18 +22,10 @@ class Putiodownload(DownloaderBase):
     status_support = False 
 
     def __init__(self):
-        # Probably a btter way to do this.
-        addEvent('download', self._download)
-        addEvent('download.enabled', self._isEnabled)
-        addEvent('download.enabled_protocols', self.getEnabledProtocol)
-        addEvent('download.status', self._getAllDownloadStatus)
-        addEvent('download.remove_failed', self._removeFailed)
-        addEvent('download.pause', self._pause)
-        addEvent('download.process_complete', self._processComplete)
-        addApiView('download.%s.test' % self.getName().lower(), self._test)
         addApiView('putiodownload.getfrom', self.getFromPutio, docs = {
             'desc': 'Allows you to download file from prom Put.io',
         })
+        return super(Putiodownload,self).__init__()
 
 
     def download(self, data = None, media = None, filedata = None):
@@ -44,9 +36,10 @@ class Putiodownload(DownloaderBase):
         OAUTH_TOKEN = self.conf('oauth_token')
         client = putio.Client(OAUTH_TOKEN)
         # Need to constuct a the API url a better way.
-        callbackurl = 'http://'+self.conf('callback_host')+'/'+self.conf('url_base', section='core')+'/api/'+self.conf('api_key', section='core')+'putiodownload.getfrom/'
-        log.info ('The callback URL is %s', callbackurl)
-	client.Transfer.add_url(url,'0','False','http://sabnzbd.dumaresq.ca/couchpotato/api/<api>/putiodownload.getfrom/')
+        callbackurl = ''
+        if self.conf('download'):
+            callbackurl = 'http://'+self.conf('callback_host')+'/'+self.conf('url_base', section='core')+'/api/'+self.conf('api_key', section='core')+'/putiodownload.getfrom/'
+	client.Transfer.add_url(url,'0','False',callbackurl)
         return True
     
     def test(self):
@@ -64,11 +57,11 @@ class Putiodownload(DownloaderBase):
        OAUTH_TOKEN = self.conf('oauth_token')
        client = putio.Client(OAUTH_TOKEN)
        files = client.File.list()
-       # Got to be a better way then a for loop!
+       delete = self.conf('detele_file')
        for f in files:
-           if str(f.id) == str(kwargs('file_id')):
+           if str(f.id) == str(kwargs.get('file_id')):
                # Need to read this in from somewhere
-               client.File.download(f,dest='/export/nas/Downloads/',detele_after_download=self.conf('delete_file'))
+               client.File.download(f, dest='/export/nas/Downloads/', delete_after_download=delete)
        return True 
  
 config = [{
@@ -79,7 +72,7 @@ config = [{
             'list': 'download_providers',
             'name': 'putiodownload',
             'label': 'put.io Download',
-            'description': 'This will start a torrent download on Putio.  <BR>Note:  you must have a putio account and API',
+            'description': 'This will start a torrent download on Put.io.  <BR>Note:  you must have a putio account and API',
             'wizard': True,
             'options': [
                 {
@@ -98,8 +91,14 @@ config = [{
                     'description': 'This is used to generate the callback url',
                 },
                 {
+                    'name': 'download',
+                    'description': 'Set this to have CouchPotato download the file from Put.io',
+                    'type': 'bool',
+                    'default': 0,
+                },
+                {
                     'name': 'detele_file',
-                    'description': 'set this to remove the file from putio after sucessful download',
+                    'description': 'Set this to remove the file from putio after sucessful download  Note: does nothing if you don\'t select download',
                     'type': 'bool',
                     'default': 0,
                 },
