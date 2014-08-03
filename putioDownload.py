@@ -36,10 +36,10 @@ class Putiodownload(DownloaderBase):
         OAUTH_TOKEN = self.conf('oauth_token')
         client = putio.Client(OAUTH_TOKEN)
         # Need to constuct a the API url a better way.
-        callbackurl = ''
+        callbackurl = None 
         if self.conf('download'):
             callbackurl = 'http://'+self.conf('callback_host')+'/'+self.conf('url_base', section='core')+'/api/'+self.conf('api_key', section='core')+'/putiodownload.getfrom/'
-	client.Transfer.add_url(url,'0','False',callbackurl)
+        client.Transfer.add_url(url,callback_url=callbackurl)
         return True
     
     def test(self):
