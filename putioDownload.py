@@ -58,10 +58,11 @@ class Putiodownload(DownloaderBase):
        client = putio.Client(OAUTH_TOKEN)
        files = client.File.list()
        delete = self.conf('detele_file')
+       downloaddir = self.conf('download_dir')
        for f in files:
            if str(f.id) == str(kwargs.get('file_id')):
                # Need to read this in from somewhere
-               client.File.download(f, dest='/export/nas/Downloads/', delete_after_download=delete)
+               client.File.download(f, dest=downloaddir, delete_after_download=delete)
        return True 
  
 config = [{
@@ -101,6 +102,12 @@ config = [{
                     'description': 'Set this to remove the file from putio after sucessful download  Note: does nothing if you don\'t select download',
                     'type': 'bool',
                     'default': 0,
+                },
+		{
+                    'name': 'download_dir',
+                    'label': 'Download Directory',
+                    'description': 'The Directory to download files to, does nothing if you don\'t select download',
+		    'default': '/',
                 },
                 {
                     'name': 'manual',
