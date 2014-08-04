@@ -13,3 +13,4 @@ Putio dowloader for http://couchpota.to
  * daemonize the process and turn this into an API for couchpotato and another for sickbeard.
 
 To install copy into Couchpotato's /core/downloaders/ directory and restart CouchPotato
+Depends on https://github.com/cenkalti/putio.py 
